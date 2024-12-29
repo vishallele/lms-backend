@@ -51,8 +51,6 @@ class UserController extends Controller
 
         $user = User::findorFail($id);
 
-        //@dd($request->input('role'));
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => [

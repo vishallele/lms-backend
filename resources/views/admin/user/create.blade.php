@@ -8,7 +8,7 @@
   </x-slot:page_heading>
 
   <div class="container p-2 mx-auto sm:p-4 max-w-2xl">
-    @if($user->id)
+    @if(isset($user->id))
     <form method="POST" action="/admin/user/update/{{$user->id}}">
       @else
       <form method="POST" action="/admin/user/store">
