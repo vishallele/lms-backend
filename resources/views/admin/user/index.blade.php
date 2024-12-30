@@ -9,6 +9,18 @@
 
   <div class="container p-2 mx-auto sm:p-4">
 
+    @if( Session::has('success'))
+    <div class="flex w-full bg-green-200 p-4 rounded-md items-center mb-5">
+      <span>{!! Session::get('success') !!}</span>
+    </div>
+    @endif
+
+    @if( Session::has('error'))
+    <div class="flex w-full bg-red-200 p-4 rounded-md items-center mb-5">
+      <span>{!! Session::get('error') !!}</span>
+    </div>
+    @endif
+
     <form method="get">
       @csrf
       <div class="flex flex-col md:flex-row items-center gap-2 md:gap-1 justify-end">
@@ -26,10 +38,10 @@
           <option value="3" {{ request()->query('user_type') == '3' ? 'selected' : '' }}>Instructor</option>
           <option value="4" {{ request()->query('user_type') == '4' ? 'selected' : '' }}>Member</option>
         </select>
-        <select class="rounded-md w-full md:w-36 px-4 py-2 border" name="status" value="{{ request()->query('status') }}>
-                    <option value="">Select Status</option>
-                    <option value=" active" {{ request()->query('status') == 'active' ? 'selected' : '' }}>Active</option>
-          <option value="inactive" {{ request()->query('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+        <select class="rounded-md w-full md:w-36 px-4 py-2 border" name="status">
+          <option value="">Select Status</option>
+          <option value="1" {{ request()->query('status') == '1' ? 'selected' : '' }}>Active</option>
+          <option value="0" {{ request()->query('status') == '0' ? 'selected' : '' }}>Inactive</option>
         </select>
         <button class="px-4 w-full md:w-24 py-2 text-white bg-gray-900 text-sm rounded-md font-bold shadow-md">Search</button>
       </div>
@@ -48,19 +60,19 @@
           </tr>
         </thead>
         <tbody class="border-b dark:bg-gray-50 dark:border-gray-300">
-          @if($users)
+          @if($users->total() > 0)
           @foreach( $users as $user )
-          <tr class="font-normal tracking-wide text-md font-bold">
-            <td class="px-3 py-2">
+          <tr class="font-normal tracking-wide text-md">
+            <td class="px-3 py-4">
               <p>{{ $user->name }}</p>
             </td>
-            <td class="px-3 py-2">
+            <td class="px-3 py-4">
               <p>{{ $user->phone_number }}</p>
             </td>
-            <td class="px-3 py-2">
+            <td class="px-3 py-4">
               <p>{{ $user->email }}</p>
             </td>
-            <td class="px-3 py-2">
+            <td class="px-3 py-4">
               <a
                 class="px-4 py-2 text-white bg-gray-900 text-sm rounded-md"
                 href="/admin/user/edit/{{$user->id}}">
@@ -69,6 +81,10 @@
             </td>
           </tr>
           @endforeach
+          @else
+          <tr>
+            <td colspan="4" class="p-4">No records found.</td>
+          </tr>
           @endif
         </tbody>
       </table>
