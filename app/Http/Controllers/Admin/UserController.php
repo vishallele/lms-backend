@@ -25,16 +25,16 @@ class UserController extends Controller
             ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id');
 
         if (isset($urlParams['status'])) {
-            $query->where('is_active', '=', (int)$urlParams['status']);
+            $query->where('is_active', '=', $urlParams['status']);
         }
 
         if (isset($urlParams['search'])) {
             $query->whereAny(['name', 'email', 'user_data.phone_number'], 'like', "%" . $urlParams['search'] . "%");
         }
 
-        $users = $query->paginate(10);
+        $query->where('deleted_at', '=', null);
 
-        //@dd($query->toSql());
+        $users = $query->paginate(10);
 
         return view('admin.user.index', ['users' => $users]);
     }
@@ -148,5 +148,42 @@ class UserController extends Controller
         } catch (Exception $e) {
             return redirect('/admin/users')->with('error', 'Failed to add user');
         }
+    }
+
+    public function bulkAction(Request $request)
+    {
+
+        $bulk_action = $request->get('bulk_action');
+
+        switch ($bulk_action) {
+            case 'inactive':
+                try {
+                    User::whereIn('id', $request->get('u'))->update(['is_active' => 0]);
+                    return redirect('/admin/users')->with('success', 'User(s) deactivated successfully.');
+                } catch (Exception $e) {
+                    return redirect('/admin/users')->with('error', 'Failed to deactivate user(s).');
+                }
+
+                break;
+            case 'active':
+                try {
+                    User::whereIn('id', $request->get('u'))->update(['is_active' => 1]);
+                    return redirect('/admin/users')->with('success', 'User(s) activated successfully.');
+                } catch (Exception $e) {
+                    return redirect('/admin/users')->with('error', 'Failed to activate user(s).');
+                }
+                break;
+            case 'delete':
+                try {
+                    User::whereIn('id', $request->get('u'))->delete();
+                    return redirect('/admin/users')->with('success', 'User(s) deleted successfully.');
+                } catch (Exception $e) {
+                    return redirect('/admin/users')->with('error', 'Failed to delete user(s).');
+                }
+                break;
+            default:
+        }
+
+        return redirect('/admin/users');
     }
 }

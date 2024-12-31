@@ -16,6 +16,7 @@ Route::prefix('admin')->group(function () {
   Route::post('/user/store', [UserController::class, 'store']);
   Route::get('/user/edit/{id}', [UserController::class, 'edit']);
   Route::post('/user/update/{id}', [UserController::class, 'update']);
+  Route::post('/user/bulkaction', [UserController::class, 'bulkAction']);
   Route::get('/courses', [CourseController::class, 'index']);
   Route::get('/payments', [PaymentController::class, 'index']);
   Route::get('/configuration', [ConfigurationController::class, 'index']);
