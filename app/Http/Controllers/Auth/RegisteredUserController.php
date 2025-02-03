@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Exception;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
@@ -18,24 +18,53 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(Request $request): JsonResponse
     {
+
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults()
+            ],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-        ]);
+        try {
+            $user = User::create([
+                'full_name' => $request->full_name,
+                'auth_type' => $request->auth_type,
+                'email' => $request->email,
+                'password' => Hash::make($request->string('password')),
+            ]);
 
-        event(new Registered($user));
+            if (!$user) {
+                throw new Exception("Failed to create account", 500);
+            }
 
-        Auth::login($user);
+            $user->UserAuthMeta()->create([
+                'user_external_id' => $request->user_external_id,
+                'access_token' => $request->access_token,
+                'refresh_token' => $request->refresh_token,
+                'id_token' => $request->id_token,
+            ]);
 
-        return response()->noContent();
+            event(new Registered($user));
+
+            return response()->json([
+                'uid' => $user->id
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'code' => '500'], 500);
+        }
+    }
+
+    public function getUserByEmail($email)
+    {
+        $exist = User::where('email', $email)->exists();
+        return response()->json([
+            'isUserExist' => $exist
+        ], 200);
     }
 }

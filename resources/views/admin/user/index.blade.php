@@ -85,7 +85,7 @@
                 <input class="c-check" name="u[]" type="checkbox" value="{{$user->id}}" />
               </td>
               <td class="px-3 py-4">
-                <p>{{ $user->name }}</p>
+                <p>{{ $user->full_name }}</p>
               </td>
               <td class="px-3 py-4">
                 <p>{{ $user->phone_number }}</p>

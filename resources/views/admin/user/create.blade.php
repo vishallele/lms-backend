@@ -56,6 +56,18 @@
               </div>
 
               <div class="sm:col-span-4">
+                <label for="phone_number" class="block text-sm/6 font-medium text-gray-900">Phone Number</label>
+                <div class="mt-2">
+                  <input
+                    type="text"
+                    name="phone_number"
+                    id="phone_number"
+                    value="{{old('phone_number', isset($user->id) ? $user->userData->phone_number : '' )}}"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                </div>
+              </div>
+
+              <div class="sm:col-span-4">
                 <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
                 <div class="mt-2">
                   <input
@@ -79,85 +91,6 @@
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="border-b border-gray-900/10 pb-12">
-            <h2 class="text-base/7 font-semibold text-gray-900">Personal Information</h2>
-            <p class="mt-1 text-sm/6 text-gray-600">Use a permanent address where you can receive mail.</p>
-
-            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div class="sm:col-span-3">
-                <label for="phone_number" class="block text-sm/6 font-medium text-gray-900">Phone Number</label>
-                <div class="mt-2">
-                  <input
-                    type="text"
-                    name="phone_number"
-                    id="phone_number"
-                    value="{{old('phone_number', isset($user->id) ? $user->userData->phone_number : '' )}}"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                </div>
-              </div>
-
-              <div class="sm:col-span-3">
-                <label for="designation" class="block text-sm/6 font-medium text-gray-900">Designation</label>
-                <div class="mt-2">
-                  <input
-                    type="text"
-                    name="designation"
-                    id="designation"
-                    value="{{old('designation', isset($user->id) ? $user->userData->designation : '')}}"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                </div>
-              </div>
-
-              <div class="sm:col-span-full">
-                <label for="email" class="block text-sm/6 font-medium text-gray-900">About User</label>
-                <div class="mt-2">
-                  <textarea
-                    name="about_user"
-                    id="about_user"
-                    rows="3"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">{{old('about_user', isset($user->id) ? $user->userData->about_user : '')}}</textarea>
-                </div>
-              </div>
-
-              <div class="sm:col-span-4">
-                <label for="facebook_url" class="block text-sm/6 font-medium text-gray-900">Facebook Url</label>
-                <div class="mt-2 grid grid-cols-1">
-                  <input
-                    type="text"
-                    name="facebook_url"
-                    id="facebook_url"
-                    value="{{old('facebook_url', isset($user->id) ? $user->userData->facebook_url : '')}}"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                </div>
-              </div>
-
-              <div class="sm:col-span-4">
-                <label for="twitter_url" class="block text-sm/6 font-medium text-gray-900">Twitter Url</label>
-                <div class="mt-2 grid grid-cols-1">
-                  <input
-                    type="text"
-                    name="twitter_url"
-                    id="twitter_url"
-                    value="{{old('twitter_url',isset($user->id) ? $user->userData->twitter_url : '')}}"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                </div>
-              </div>
-
-              <div class="sm:col-span-4">
-                <label for="linkedin_url" class="block text-sm/6 font-medium text-gray-900">Linkedin Url</label>
-                <div class="mt-2 grid grid-cols-1">
-                  <input
-                    type="text"
-                    name="linkedin_url"
-                    id="linkedin_url"
-                    value="{{old('linkedin_url', isset($user->id) ? $user->userData->linkedin_url : '')}}"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                </div>
-              </div>
-
             </div>
           </div>
 

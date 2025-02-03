@@ -21,15 +21,14 @@ class UserController extends Controller
 
         $urlParams = request()->query();
 
-        $query = DB::table('users')
-            ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id');
+        $query = DB::table('users');
 
         if (isset($urlParams['status'])) {
             $query->where('is_active', '=', $urlParams['status']);
         }
 
         if (isset($urlParams['search'])) {
-            $query->whereAny(['name', 'email', 'user_data.phone_number'], 'like', "%" . $urlParams['search'] . "%");
+            $query->whereAny(['full_name', 'email', 'user_data.phone_number'], 'like', "%" . $urlParams['search'] . "%");
         }
 
         $query->where('deleted_at', '=', null);

@@ -4,9 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\User;
+use App\Models\UserAuthMeta;
 use App\Models\UserData;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +21,17 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        UserData::factory(20)->create();
+        //UserAuthMeta::factory(20)->create();
+
+        User::factory()->create([
+            'full_name' => 'Vishal Lele',
+            'email' => 'vishall@cybage.com',
+            'phone_number' => '9854754747',
+            'email_verified_at' => fake()->dateTime(),
+            'auth_type' => 'email',
+            'password' => Hash::make('admin123'),
+            'remember_token' => Str::random(20),
+        ]);
 
         Role::factory()->create([
             'role_name' => 'Admin',
