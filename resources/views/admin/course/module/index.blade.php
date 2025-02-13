@@ -2,8 +2,8 @@
 
   <x-slot:page_heading>
     <div class="flex items-center justify-between">
-      Courses
-      <a href="/admin/course/create" class="px-4 py-2 text-white bg-gray-900 text-sm rounded-md">Add course</a>
+      Modules
+      <a href="/admin/course/{{$course_id}}/module/create" class="px-4 py-2 text-white bg-gray-900 text-sm rounded-md">Add module</a>
     </div>
   </x-slot:page_heading>
 
@@ -28,41 +28,34 @@
             <th class="p-4">
               <input type="checkbox" class="p-check" />
             </th>
-            <th class="p-4">Course Name</th>
+            <th class="p-4">Module Name</th>
             <th class="p-4">
               <span class="sr-only">Action</span>
             </th>
           </tr>
         </thead>
         <tbody class="border-b dark:bg-gray-50 dark:border-gray-300">
-          @if($courses->total() > 0)
-          @foreach( $courses as $course )
+          @if($modules->total() > 0)
+          @foreach( $modules as $module )
           <tr class="font-normal tracking-wide text-md">
             <td class="px-4">
-              <input class="c-check" name="c[]" type="checkbox" value="{{$course->id}}" />
+              <input class="c-check" name="m[]" type="checkbox" value="{{$module->id}}" />
             </td>
             <td class="px-3 py-4">
-              <p>{{ $course->title }}</p>
+              <p>{{ $module->getTranslation('title', 'en') }}</p>
             </td>
             <td class="px-2 py-4">
-              <div class="flex gap-2 items-center">
-                <a
-                  class="px-2 py-2  text-white bg-gray-900 text-sm rounded-md"
-                  href="/admin/course/edit/{{$course->id}}">
-                  Edit
-                </a>
-                <a
-                  class="px-2 py-2  text-white bg-gray-900 text-sm rounded-md"
-                  href="/admin/course/{{$course->id}}/modules">
-                  Add Module
-                </a>
-              </div>
+              <a
+                class="px-2 py-2  text-white bg-gray-900 text-sm rounded-md"
+                href="/admin/course/{{$course_id}}/module/edit/{{$module->id}}">
+                Edit
+              </a>
             </td>
           </tr>
           @endforeach
           @else
           <tr>
-            <td colspan="4" class="p-4">No records found.</td>
+            <td colspan="4" class="p-4">No modules found.</td>
           </tr>
           @endif
         </tbody>
@@ -70,7 +63,7 @@
     </div>
 
     <div class="mt-5">
-      {{ $courses->withQueryString()->links() }}
+      {{ $modules->withQueryString()->links() }}
     </div>
 
   </div>
