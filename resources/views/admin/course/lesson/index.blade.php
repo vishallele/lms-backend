@@ -2,8 +2,12 @@
 
   <x-slot:page_heading>
     <div class="flex items-center justify-between">
-      Modules
-      <a href="/admin/course/{{$course_id}}/module/create" class="px-4 py-2 text-white bg-gray-900 text-sm rounded-md">Add module</a>
+      Lessons
+      <a
+        href="/admin/course/{{$course_id}}/module/{{$module_id}}/lesson/create"
+        class="px-4 py-2 text-white bg-gray-900 text-sm rounded-md">
+        Add lesson
+      </a>
     </div>
   </x-slot:page_heading>
 
@@ -28,33 +32,33 @@
             <th class="p-4">
               <input type="checkbox" class="p-check" />
             </th>
-            <th class="p-4">Module Name</th>
+            <th class="p-4">Lesson Name</th>
             <th class="p-4">
               <span class="sr-only">Action</span>
             </th>
           </tr>
         </thead>
         <tbody class="border-b dark:bg-gray-50 dark:border-gray-300">
-          @if($modules->total() > 0)
-          @foreach( $modules as $module )
+          @if($lessons->total() > 0)
+          @foreach( $lessons as $lesson )
           <tr class="font-normal tracking-wide text-md">
             <td class="px-4">
-              <input class="c-check" name="m[]" type="checkbox" value="{{$module->id}}" />
+              <input class="c-check" name="l[]" type="checkbox" value="{{$lesson->id}}" />
             </td>
             <td class="px-3 py-4">
-              <p>{{ $module->getTranslation('title', 'en') }}</p>
+              <p>{{ $lesson->title }}</p>
             </td>
             <td class="px-2 py-4">
               <div class="flex gap-2 items-center">
                 <a
                   class="px-2 py-2  text-white bg-gray-900 text-sm rounded-md"
-                  href="/admin/course/{{$course_id}}/module/edit/{{$module->id}}">
+                  href="/admin/course/{{$course_id}}/module/{{$module_id}}/lesson/edit/{{$lesson->id}}">
                   Edit
                 </a>
                 <a
                   class="px-2 py-2  text-white bg-gray-900 text-sm rounded-md"
-                  href="/admin/course/{{$course_id}}/module/{{$module->id}}/lessons">
-                  Add Lessons
+                  href="/admin/course/{{$course_id}}/module/{{$module_id}}/lesson/{{$lesson->id}}/questions">
+                  Add Questions
                 </a>
               </div>
             </td>
@@ -62,7 +66,7 @@
           @endforeach
           @else
           <tr>
-            <td colspan="4" class="p-4">No modules found.</td>
+            <td colspan="4" class="p-4">No records found.</td>
           </tr>
           @endif
         </tbody>
@@ -70,7 +74,7 @@
     </div>
 
     <div class="mt-5">
-      {{ $modules->withQueryString()->links() }}
+      {{ $lessons->withQueryString()->links() }}
     </div>
 
   </div>

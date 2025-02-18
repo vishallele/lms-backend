@@ -16,12 +16,7 @@ class ModuleController extends Controller
         if (!$course_id) {
             return redirect('/admin/courses')->with('error', 'Invalid course');
         }
-        //$modules = DB::table('modules')->where('course_id', '=', $course_id)->paginate(10);
-
         $modules = Module::where('course_id', '=', $course_id)->paginate(10);
-
-        // dd($modules);
-
         return view('admin.course.module.index', ['course_id' => $course_id, 'modules' => $modules]);
     }
 

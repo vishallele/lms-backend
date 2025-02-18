@@ -16,6 +16,7 @@
         "mll-lab/laravel-graphiql": "^3.2",
         "mongodb/laravel-mongodb": "^5.1",
         "nuwave/lighthouse": "^6.49",
+        "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-translatable": "^6.10"
     },
     "require-dev": {
