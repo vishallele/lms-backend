@@ -16,6 +16,8 @@ class Question extends Model implements HasMedia
 
     protected $table = "questions";
 
+    protected $fillable = ['question_data', 'lesson_id', 'question_type'];
+
     public function lesson()
     {
         return $this->belongsTo(Lesson::class);

@@ -15,13 +15,18 @@
     @if(isset($user->id))
     <form
       method="POST"
-      action="/admin/course/{{$course_id}}/module/{{$module_id}}/lesson/{{$lesson_id}}/question/update/{{$question->id}}">
+      id="add_edit_question_form"
+      action="/admin/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/edit/{question_id}"
+      enctype="multipart/form-data">
       @else
       <form
         method="POST"
-        action="/admin/course/{{$course_id}}/module/{{$module_id}}/lesson/{{$lesson_id}}/question/create">
+        id="add_edit_question_form"
+        action="/admin/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/store"
+        enctype="multipart/form-data">
         @endif
         @csrf
+        <input type="hidden" name="lesson_id" value="{{$lesson_id}}" />
         <div class="space-y-12">
           <div class="border-b border-gray-900/10 pb-12">
             <h2 class="text-base/7 font-semibold text-gray-900">Add Question</h2>
@@ -29,6 +34,10 @@
 
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div class="sm:col-span-6">
+                <div id="errorMessages">
+                </div>
+              </div>
+              <div class="sm:col-span-6 input_container">
                 <label for="status" class="block text-sm/6 font-medium text-gray-900">Select Question Type</label>
                 <div class="mt-2 grid grid-cols-2">
                   <select
@@ -53,10 +62,12 @@
 
           <div class="mt-6 flex items-center justify-end gap-x-6">
             <a href="/admin/users" class="text-sm/6 font-semibold text-gray-900">Cancel</a>
-            <button type="submit" class="rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Save</button>
+            <button
+              type="submit"
+              id="submit_question_form"
+              class="rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Save</button>
           </div>
-
+        </div>
       </form>
   </div>
-
 </x-admin.layout>

@@ -43,10 +43,10 @@
           @foreach( $questions as $question )
           <tr class="font-normal tracking-wide text-md">
             <td class="px-4">
-              <input class="c-check" name="l[]" type="checkbox" value="{{$lesson->id}}" />
+              <input class="c-check" name="l[]" type="checkbox" value="{{$question->id}}" />
             </td>
             <td class="px-3 py-4">
-              <p>{{ $question->text }}</p>
+              <p>{{ $question->question_data['text']['en']['text'] }}</p>
             </td>
             <td class="px-2 py-4">
               <div class="flex gap-2 items-center">
