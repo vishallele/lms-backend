@@ -24,8 +24,6 @@ class StoreQuestionRequest extends FormRequest
     public function rules(): array
     {
 
-        //dd($this);
-
         $questionType = $this->input('question_type');
 
         $rules = [
@@ -43,7 +41,7 @@ class StoreQuestionRequest extends FormRequest
                     'option_hi_text_.*' => 'required',
                     'option_mr_text_.*' => 'required',
                     //'option_correct' => 'required',
-                    'option_correct_.*' => 'accepted|min:1',
+                    'option_correct_.*' => 'required|min:1',
                     'option_en_audio_.*' => [
                         Rule::excludeIf($this->file('option_en_audio_.*') === null),
                         File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
@@ -56,17 +54,81 @@ class StoreQuestionRequest extends FormRequest
                         Rule::excludeIf($this->file('option_mr_audio_.*') === null),
                         File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
                     ],
-                    'option_en_image_.*' => [
-                        Rule::excludeIf($this->file('option_en_image_.*') === null),
+                    'option_image_.*' => [
+                        Rule::excludeIf($this->file('option_image_.*') === null),
                         File::types(['svg', 'json', 'jpeg', 'jpg', 'gif'])->max(8 * 1024)
                     ],
-                    'option_hi_image_.*' => [
-                        Rule::excludeIf($this->file('option_en_image_.*') === null),
+                ];
+                break;
+            case "fill_blanks":
+                $rules = [
+                    'instruction_en' => 'required',
+                    'instruction_hi' => 'required',
+                    'instruction_mr' => 'required',
+                    'sentence_en' => 'required',
+                    'sentence_hi' => 'required',
+                    'sentence_mr' => 'required',
+                    'option_en_text_.*' => 'required',
+                    'option_hi_text_.*' => 'required',
+                    'option_mr_text_.*' => 'required',
+                    'correct_sentence' => 'required',
+                    'sentence_image' => [
+                        Rule::excludeIf($this->file('sentence_image') === null),
                         File::types(['svg', 'json', 'jpeg', 'jpg', 'gif'])->max(8 * 1024)
                     ],
-                    'option_mr_image_.*' => [
-                        Rule::excludeIf($this->file('option_en_image_.*') === null),
+                    'option_en_audio_.*' => [
+                        Rule::excludeIf($this->file('option_en_audio_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_hi_audio_.*' => [
+                        Rule::excludeIf($this->file('option_hi_audio_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_mr_audio_.*' => [
+                        Rule::excludeIf($this->file('option_mr_audio_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                ];
+                break;
+            case "pair_matching":
+                $rules = [
+                    'option_en_text_l_.*' => 'required',
+                    'option_hi_text_l_.*' => 'required',
+                    'option_mr_text_l_.*' => 'required',
+                    'option_en_text_r_.*' => 'required',
+                    'option_hi_text_r_.*' => 'required',
+                    'option_mr_text_r_.*' => 'required',
+                    'option_image_l_.*' => [
+                        Rule::excludeIf($this->file('option_image_l_.*') === null),
                         File::types(['svg', 'json', 'jpeg', 'jpg', 'gif'])->max(8 * 1024)
+                    ],
+                    'option_image_r_.*' => [
+                        Rule::excludeIf($this->file('option_image_r_.*') === null),
+                        File::types(['svg', 'json', 'jpeg', 'jpg', 'gif'])->max(8 * 1024)
+                    ],
+                    'option_en_audio_l_.*' => [
+                        Rule::excludeIf($this->file('option_en_audio_l_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_hi_audio_l_.*' => [
+                        Rule::excludeIf($this->file('option_hi_audio_l_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_mr_audio_l_.*' => [
+                        Rule::excludeIf($this->file('option_mr_audio_l_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_en_audio_r_.*' => [
+                        Rule::excludeIf($this->file('option_en_audio_r_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_hi_audio_r_.*' => [
+                        Rule::excludeIf($this->file('option_hi_audio_r_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_mr_audio_r_.*' => [
+                        Rule::excludeIf($this->file('option_mr_audio_r_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
                     ],
                 ];
                 break;

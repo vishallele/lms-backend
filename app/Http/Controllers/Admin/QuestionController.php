@@ -104,97 +104,27 @@ class QuestionController extends Controller
 
         $request->validated();
 
-        $options = [];
         $lesson_id = (int)$request->get('lesson_id');
         $question_type = $request->get('question_type');
+        $question_data = '';
 
-        $questionAudioEn = $questionAudioHi = $questionAudioMr = null;
-
-        //question audio uploading
-        if ($request->file('question_audio_en')) {
-            $requestFile = $request->file('question_audio_en');
-            $questionAudioEn = $requestFile->store("audio/option/en");
+        switch ($question_type) {
+            case "select_image":
+            case "select_text":
+                $question_data = $this->getSelectTextAndImageData($request);
+                break;
+            case "fill_blanks":
+                $question_data = $this->getFillinBlanksData($request);
+                break;
+            case "pair_matching":
+                $question_data = $this->getPairMatchingData($request);
+                break;
         }
 
-        if ($request->file('question_audio_hi')) {
-            $requestFile = $request->file('question_audio_hi');
-            $questionAudioHi = $requestFile->store("audio/option/hi");
-        }
-
-        if ($request->file('question_text_mr')) {
-            $requestFile = $request->file('question_text_mr');
-            $questionAudioMr = $requestFile->store("audio/option/mr");
-        }
-
-        for ($i = 0; $i < \count($request->get('option_en_text_')); $i++) {
-
-            $enAudioFile = $hiAudioFile = $mrAudioFile = $optionImage = null;
-
-            if (isset($request->file('option_en_audio_')[$i])) {
-                $requestFile = $request->file('option_en_audio_')[$i];
-                $enAudioFile = $requestFile->store("audio/option/en");
-            }
-
-
-            if (isset($request->file('option_hi_audio_')[$i])) {
-                $requestFile = $request->file('option_hi_audio_')[$i];
-                $hiAudioFile = $requestFile->store("audio/option/hi");
-            }
-
-            if (isset($request->file('option_mr_audio_')[$i])) {
-                $requestFile = $request->file('option_mr_audio_')[$i];
-                $mrAudioFile = $requestFile->store("audio/option/mr");
-            }
-
-            if (isset($request->file('option_image_')[$i])) {
-                $requestFile = $request->file('option_image_')[$i];
-                $optionImage = $requestFile->store("image/option");
-            }
-
-
-            $options[$i] = [
-                "text" => [
-                    "en" => [
-                        "text" => $request->get('option_en_text_')[$i],
-                        "audio" => $enAudioFile
-                    ],
-                    "hi" => [
-                        "text" => $request->get('option_hi_text_')[$i],
-                        "audio" => $hiAudioFile
-                    ],
-                    "mr" => [
-                        "text" => $request->get('option_mr_text_')[$i],
-                        "audio" => $mrAudioFile
-                    ]
-                ],
-                "image" => $optionImage,
-                "correct_answer" => isset($request->get('option_correct_')[$i]) ? 1 : 0,
-            ];
-        }
-
-
-        $question = [
-
-            "text" => [
-                "en" => [
-                    "text" => $request->get('question_text_en'),
-                    "audio" => $questionAudioEn
-                ],
-                "hi" => [
-                    "text" => $request->get('question_text_hi'),
-                    "audio" => $questionAudioHi
-                ],
-                "mr" => [
-                    "text" => $request->get('question_text_mr'),
-                    "audio" => $questionAudioMr
-                ]
-            ],
-            "options" => $options
-        ];
 
         try {
             $question = Question::create([
-                "question_data" => $question,
+                "question_data" => $question_data,
                 "lesson_id" => $lesson_id,
                 "question_type" => $question_type
             ]);
@@ -203,7 +133,275 @@ class QuestionController extends Controller
         }
     }
 
+    private function getSelectTextAndImageData($data)
+    {
 
+        $question = $options = [];
+
+        $questionAudioEn = $questionAudioHi = $questionAudioMr = null;
+
+        //question audio uploading
+        if ($data->file('question_audio_en')) {
+            $requestFile = $data->file('question_audio_en');
+            $questionAudioEn = $requestFile->store("audio/option/en");
+        }
+
+        if ($data->file('question_audio_hi')) {
+            $requestFile = $data->file('question_audio_hi');
+            $questionAudioHi = $requestFile->store("audio/option/hi");
+        }
+
+        if ($data->file('question_text_mr')) {
+            $requestFile = $data->file('question_text_mr');
+            $questionAudioMr = $requestFile->store("audio/option/mr");
+        }
+
+        for ($i = 0; $i < \count($data->get('option_en_text_')); $i++) {
+
+            $enAudioFile = $hiAudioFile = $mrAudioFile = $optionImage = null;
+
+            if (isset($data->file('option_en_audio_')[$i])) {
+                $requestFile = $data->file('option_en_audio_')[$i];
+                $enAudioFile = $requestFile->store("audio/option/en");
+            }
+
+
+            if (isset($data->file('option_hi_audio_')[$i])) {
+                $requestFile = $data->file('option_hi_audio_')[$i];
+                $hiAudioFile = $requestFile->store("audio/option/hi");
+            }
+
+            if (isset($data->file('option_mr_audio_')[$i])) {
+                $requestFile = $data->file('option_mr_audio_')[$i];
+                $mrAudioFile = $requestFile->store("audio/option/mr");
+            }
+
+            if (isset($data->file('option_image_')[$i])) {
+                $requestFile = $data->file('option_image_')[$i];
+                $optionImage = $requestFile->store("image/option");
+            }
+
+
+            $options[$i] = [
+                "text" => [
+                    "en" => [
+                        "text" => $data->get('option_en_text_')[$i],
+                        "audio" => $enAudioFile
+                    ],
+                    "hi" => [
+                        "text" => $data->get('option_hi_text_')[$i],
+                        "audio" => $hiAudioFile
+                    ],
+                    "mr" => [
+                        "text" => $data->get('option_mr_text_')[$i],
+                        "audio" => $mrAudioFile
+                    ]
+                ],
+                "image" => $optionImage,
+                "correct_answer" => isset($data->get('option_correct_')[$i]) ? 1 : 0,
+            ];
+        }
+
+
+        $question = [
+
+            "text" => [
+                "en" => [
+                    "text" => $data->get('question_text_en'),
+                    "audio" => $questionAudioEn
+                ],
+                "hi" => [
+                    "text" => $data->get('question_text_hi'),
+                    "audio" => $questionAudioHi
+                ],
+                "mr" => [
+                    "text" => $data->get('question_text_mr'),
+                    "audio" => $questionAudioMr
+                ]
+            ],
+            "options" => $options
+        ];
+
+        return $question;
+    }
+
+    private function getFillinBlanksData($data)
+    {
+
+        $question = $options = [];
+
+        $sentenceImage = null;
+
+        //sentence image uploading
+        if ($data->file('sentence_image')) {
+            $requestFile = $data->file('sentence_image');
+            $sentenceImage = $requestFile->store("image");
+        }
+
+        for ($i = 0; $i < \count($data->get('option_en_text_')); $i++) {
+
+            $enAudioFile = $hiAudioFile = $mrAudioFile =  null;
+
+            if (isset($data->file('option_en_audio_')[$i])) {
+                $requestFile = $data->file('option_en_audio_')[$i];
+                $enAudioFile = $requestFile->store("audio/option/en");
+            }
+
+            if (isset($data->file('option_hi_audio_')[$i])) {
+                $requestFile = $data->file('option_hi_audio_')[$i];
+                $hiAudioFile = $requestFile->store("audio/option/hi");
+            }
+
+            if (isset($data->file('option_mr_audio_')[$i])) {
+                $requestFile = $data->file('option_mr_audio_')[$i];
+                $mrAudioFile = $requestFile->store("audio/option/mr");
+            }
+
+
+            $options[$i] = [
+                "text" => [
+                    "en" => [
+                        "text" => $data->get('option_en_text_')[$i],
+                        "audio" => $enAudioFile
+                    ],
+                    "hi" => [
+                        "text" => $data->get('option_hi_text_')[$i],
+                        "audio" => $hiAudioFile
+                    ],
+                    "mr" => [
+                        "text" => $data->get('option_mr_text_')[$i],
+                        "audio" => $mrAudioFile
+                    ]
+                ]
+            ];
+        }
+
+
+        $question = [
+
+            "text" => [
+                "en" => [
+                    "text" => $data->get('sentence_en'),
+                    "instruction" => $data->get('instruction_en'),
+                ],
+                "hi" => [
+                    "text" => $data->get('sentence_hi'),
+                    "instruction" => $data->get('instruction_hi'),
+                ],
+                "mr" => [
+                    "text" => $data->get('sentence_mr'),
+                    "instruction" => $data->get('instruction_mr')
+                ]
+            ],
+            "correct_sentence" => $data->get('correct_sentence'),
+            "image" => $sentenceImage,
+            "options" => $options
+        ];
+
+        return $question;
+    }
+
+    private function getPairMatchingData($data)
+    {
+
+        $question = $leftPair = $rightPair = [];
+
+        for ($i = 0; $i < \count($data->get('option_en_text_l_')); $i++) {
+
+            $enAudioFile = $hiAudioFile = $mrAudioFile = $pairImage = null;
+
+            if (isset($data->file('option_en_audio_l_')[$i])) {
+                $requestFile = $data->file('option_en_audio_l_')[$i];
+                $enAudioFile = $requestFile->store("audio/option/en");
+            }
+
+            if (isset($data->file('option_hi_audio_l_')[$i])) {
+                $requestFile = $data->file('option_hi_audio_l_')[$i];
+                $hiAudioFile = $requestFile->store("audio/option/hi");
+            }
+
+            if (isset($data->file('option_mr_audio_l_')[$i])) {
+                $requestFile = $data->file('option_mr_audio_l_')[$i];
+                $mrAudioFile = $requestFile->store("audio/option/mr");
+            }
+
+            if (isset($data->file('option_image_l_')[$i])) {
+                $requestFile = $data->file('option_image_l_')[$i];
+                $pairImage = $requestFile->store("image/option");
+            }
+
+
+            $leftPair[$i] = [
+                "text" => [
+                    "en" => [
+                        "text" => $data->get('option_en_text_l_')[$i],
+                        "audio" => $enAudioFile
+                    ],
+                    "hi" => [
+                        "text" => $data->get('option_hi_text_l_')[$i],
+                        "audio" => $hiAudioFile
+                    ],
+                    "mr" => [
+                        "text" => $data->get('option_mr_text_l_')[$i],
+                        "audio" => $mrAudioFile
+                    ]
+                ],
+                "image" => $pairImage
+            ];
+        }
+
+        for ($i = 0; $i < \count($data->get('option_en_text_r_')); $i++) {
+
+            $enAudioFile = $hiAudioFile = $mrAudioFile = $pairImage = null;
+
+            if (isset($data->file('option_en_audio_r_')[$i])) {
+                $requestFile = $data->file('option_en_audio_r_')[$i];
+                $enAudioFile = $requestFile->store("audio/option/en");
+            }
+
+            if (isset($data->file('option_hi_audio_r_')[$i])) {
+                $requestFile = $data->file('option_hi_audio_r_')[$i];
+                $hiAudioFile = $requestFile->store("audio/option/hi");
+            }
+
+            if (isset($data->file('option_mr_audio_l_')[$i])) {
+                $requestFile = $data->file('option_mr_audio_r_')[$i];
+                $mrAudioFile = $requestFile->store("audio/option/mr");
+            }
+
+            if (isset($data->file('option_image_r_')[$i])) {
+                $requestFile = $data->file('option_image_r_')[$i];
+                $pairImage = $requestFile->store("image/option");
+            }
+
+
+            $rightPair[$i] = [
+                "text" => [
+                    "en" => [
+                        "text" => $data->get('option_en_text_r_')[$i],
+                        "audio" => $enAudioFile
+                    ],
+                    "hi" => [
+                        "text" => $data->get('option_hi_text_r_')[$i],
+                        "audio" => $hiAudioFile
+                    ],
+                    "mr" => [
+                        "text" => $data->get('option_mr_text_r_')[$i],
+                        "audio" => $mrAudioFile
+                    ]
+                ],
+                "image" => $pairImage
+            ];
+        }
+
+
+        $question = [
+            "left_pair" => $leftPair,
+            "right_pair" => $rightPair
+        ];
+
+        return $question;
+    }
 
     public function edit() {}
 

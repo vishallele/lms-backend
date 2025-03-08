@@ -28,6 +28,8 @@ jQuery(function ($) {
 
   initTab("question_container");
   initTab("option_container_wrapper_0");
+  initTab("option_container_wrapper_l_0");
+  initTab("option_container_wrapper_r_0");
 
   $(".add_option").on("click", function (e) {
 
@@ -35,7 +37,8 @@ jQuery(function ($) {
 
     let optionContainer = $(`.option_container`);
     let newOption = $(".option_container_wrapper").first().clone();
-    newOption.find('input').val('');
+    newOption.find('input[type=text]').val('');
+    newOption.find('input[type=file]').val('');
     newOption.find('.error_container').remove();
     newOption.appendTo(optionContainer);
 
@@ -100,6 +103,85 @@ jQuery(function ($) {
         .attr("for", `option_correct_[${index}]`);
 
       initTab(`option_container_wrapper_${index}`);
+
+    });
+
+  });
+
+  $(".add_pair_match").on("click", function (e) {
+
+    e.preventDefault();
+
+    let column = $(this).data('column');
+    let wrapperContainer = $(this).parent().parent();
+    let optionContainer = wrapperContainer.find(`.option_container`);
+    let newOption = wrapperContainer.find(`.option_container_wrapper`).first().clone();
+    newOption.find('input[type=text]').val('');
+    newOption.find('input[type=file]').val('');
+    newOption.find('.error_container').remove();
+    newOption.appendTo(optionContainer);
+
+    wrapperContainer.find(".option_container_wrapper").each((index, element) => {
+
+      $(element).attr("id", `option_container_wrapper_${column}_${index}`);
+
+      $(element)
+        .find(".option_text_en_input")
+        .attr("name", `option_en_text_${column}_[${index}]`)
+        .attr("id", `option_en_text_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_en_text_${column}_[${index}]`);
+
+      $(element)
+        .find(".option_audio_en_input")
+        .attr("name", `option_en_audio_${column}_[${index}]`)
+        .attr("id", `option_en_audio_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_en_audio_${column}_[${index}]`);
+
+      $(element)
+        .find(".option_text_hi_input")
+        .attr("name", `option_hi_text_${column}_[${index}]`)
+        .attr("id", `option_hi_text_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_hi_text_${column}_[${index}]`);
+
+      $(element)
+        .find(".option_audio_hi_input")
+        .attr("name", `option_hi_audio_${column}_[${index}]`)
+        .attr("id", `option_hi_audio_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_hi_audio_${column}_[${index}]`);
+
+      $(element)
+        .find(".option_text_mr_input")
+        .attr("name", `option_mr_text_${column}_[${index}]`)
+        .attr("id", `option_mr_text_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_mr_text_${column}_[${index}]`);
+
+      $(element)
+        .find(".option_audio_mr_input")
+        .attr("name", `option_mr_audio_${column}_[${index}]`)
+        .attr("id", `option_mr_audio_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_mr_audio_${column}_[${index}]`);
+
+      $(element)
+        .find(".option_image_input")
+        .attr("name", `option_image_${column}_[${index}]`)
+        .attr("id", `option_image_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_image_${column}_[${index}]`);
+
+      $(element)
+        .find(".option_correct_input")
+        .attr("name", `option_correct_${column}_[${index}]`)
+        .attr("id", `option_correct_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_correct_${column}_[${index}]`);
+
+      initTab(`option_container_wrapper_${column}_${index}`);
 
     });
 
@@ -173,6 +255,67 @@ jQuery(function ($) {
 
       initTab(`option_container_wrapper_${index}`);
 
+    });
+  });
+
+  $(document).on('click', '.delete_pair_matching', function (e) {
+    e.preventDefault();
+    let column = $(this).data('column');
+    let divContainer = (column === 'l') ? 'left_items' : 'right_items';
+    let wrapperContainer = $(this).closest('#' + divContainer);
+    $(this).parent().parent().remove();
+    wrapperContainer.find(".option_container_wrapper").each((index, element) => {
+      $(element).attr("id", `option_container_wrapper_${index}`);
+      $(element)
+        .find(".option_text_en_input")
+        .attr("name", `option_en_text_${column}_[${index}]`)
+        .attr("id", `option_en_text_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_en_text_${column}_[${index}]`);
+      $(element)
+        .find(".option_audio_en_input")
+        .attr("name", `option_en_audio_${column}_[${index}]`)
+        .attr("id", `option_en_audio_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_en_audio_${column}_[${index}]`);
+      $(element)
+        .find(".option_text_hi_input")
+        .attr("name", `option_hi_text_${column}_[${index}]`)
+        .attr("id", `option_hi_text_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_hi_text_${column}_[${index}]`);
+      $(element)
+        .find(".option_audio_hi_input")
+        .attr("name", `option_hi_audio_${column}_[${index}]`)
+        .attr("id", `option_hi_audio_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_hi_audio_${column}_[${index}]`);
+      $(element)
+        .find(".option_text_mr_input")
+        .attr("name", `option_mr_text_${column}_[${index}]`)
+        .attr("id", `option_mr_text_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_mr_text_${column}_[${index}]`);
+      $(element)
+        .find(".option_audio_mr_input")
+        .attr("name", `option_mr_audio_${column}_[${index}]`)
+        .attr("id", `option_mr_audio_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_mr_audio_${column}_[${index}]`);
+      $(element)
+        .find(".option_image_input")
+        .attr("name", `option_image_${column}_[${index}]`)
+        .attr("id", `option_image_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_image_${column}_[${index}]`);
+      $(element)
+        .find(".option_correct_input")
+        .attr("name", `option_correct_${column}_[${index}]`)
+        .attr("id", `option_correct_${column}_[${index}]`)
+        .siblings('label')
+        .attr("for", `option_correct_${column}_[${index}]`);
+
+      initTab(`option_container_wrapper_${column}_${index}`);
     });
   });
 
