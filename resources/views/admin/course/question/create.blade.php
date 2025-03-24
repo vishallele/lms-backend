@@ -12,21 +12,24 @@
   </x-slot:page_heading>
 
   <div class="container p-2 mx-auto sm:p-4 max-w-7xl">
-    @if(isset($user->id))
+    @if(isset($question->id))
     <form
       method="POST"
       id="add_edit_question_form"
-      action="/admin/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/edit/{question_id}"
+      action="/admin/course/{{$course_id}}/module/{{$module_id}}/lesson/{{$lesson_id}}/question/update/{{$question_id}}"
       enctype="multipart/form-data">
       @else
       <form
         method="POST"
         id="add_edit_question_form"
-        action="/admin/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/store"
+        action="/admin/course/{{$course_id}}/module/{{$module_id}}/lesson/{{$lesson_id}}/question/store"
         enctype="multipart/form-data">
         @endif
         @csrf
         <input type="hidden" name="lesson_id" value="{{$lesson_id}}" />
+        @if(isset($question->id))
+        <input type="hidden" name="question_type" value="{{$question->question_type}}" />
+        @endif
         <div class="space-y-12">
           <div class="border-b border-gray-900/10 pb-12">
             <h2 class="text-base/7 font-semibold text-gray-900">Add Question</h2>
@@ -46,10 +49,15 @@
                         id="question_type"
                         name="question_type"
                         autocomplete="status-name"
-                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        {{ isset($question->id) ? 'disabled' : '' }}>
                         <option value="">Select Question Type</option>
                         @foreach($question_types as $key => $value )
-                        <option value="{{$key}}">{{ $value }}</option>
+                        <option
+                          value="{{$key}}"
+                          {{ old('question_type', isset($question->id) ? $question->question_type : '') === $key ? 'selected' : ''  }}>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
 
@@ -60,7 +68,16 @@
                   </div>
                 </div>
               </div>
-              @include('admin.course.question.types.pair_matching')
+              @if(isset($question->id))
+              @includeWhen( $question->question_type === 'select_image', 'admin.course.question.types.select_text')
+              @includeWhen( $question->question_type === 'select_text', 'admin.course.question.types.select_text')
+              @includeWhen( $question->question_type === 'fill_blanks', 'admin.course.question.types.fill_in_blanks')
+              @includeWhen( $question->question_type === 'pair_matching', 'admin.course.question.types.pair_matching')
+              @includeWhen( $question->question_type === 'audio_to_text', 'admin.course.question.types.audio_to_text')
+              @includeWhen( $question->question_type === 'audio_to_audio', 'admin.course.question.types.audio_to_audio')
+              @else
+              <div id="subview" class="w-full sm:col-span-8"></div>
+              @endif
             </div>
           </div>
 

@@ -132,6 +132,46 @@ class StoreQuestionRequest extends FormRequest
                     ],
                 ];
                 break;
+            case 'audio_to_text':
+                $rules = [
+                    'question_audio_en' => 'required',
+                    'question_audio_hi' => 'required',
+                    'question_audio_mr' => 'required',
+                    'correct_sentence' => 'required',
+                    'option_en_text_.*' => 'required',
+                    'option_hi_text_.*' => 'required',
+                    'option_mr_text_.*' => 'required',
+                    'correct_sentence' => 'required',
+                    'question_image' => [
+                        Rule::excludeIf($this->file('question_image') === null),
+                        File::types(['svg', 'json', 'jpeg', 'jpg', 'gif'])->max(8 * 1024)
+                    ],
+                    'option_en_audio_.*' => [
+                        Rule::excludeIf($this->file('option_en_audio_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_hi_audio_.*' => [
+                        Rule::excludeIf($this->file('option_hi_audio_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                    'option_mr_audio_.*' => [
+                        Rule::excludeIf($this->file('option_mr_audio_.*') === null),
+                        File::types(['mp3', 'mp4', 'wav'])->max(8 * 1024)
+                    ],
+                ];
+                break;
+            case 'audio_to_audio':
+                $rules = [
+                    'question_audio_en' => 'required',
+                    'question_audio_hi' => 'required',
+                    'question_audio_mr' => 'required',
+                    'correct_sentence' => 'required',
+                    'question_image' => [
+                        Rule::excludeIf($this->file('question_image') === null),
+                        File::types(['svg', 'json', 'jpeg', 'jpg', 'gif'])->max(8 * 1024)
+                    ],
+                ];
+                break;
         }
 
         return $rules;

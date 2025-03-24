@@ -55,17 +55,14 @@ Route::prefix('admin')->group(function () {
     '/course/{course_id}/module/{module_id}/lesson/{lesson_id}/questions',
     [QuestionController::class, 'index']
   );
-
   Route::get(
     '/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/create',
     [QuestionController::class, 'create']
   );
-
   Route::post(
     '/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/store',
     [QuestionController::class, 'store']
   );
-
   Route::get(
     '/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/edit/{question_id}',
     [QuestionController::class, 'edit']
@@ -74,6 +71,7 @@ Route::prefix('admin')->group(function () {
     '/course/{course_id}/module/{module_id}/lesson/{lesson_id}/question/update/{question_id}',
     [QuestionController::class, 'update']
   );
+  Route::get('/subview/ajax/question/{question_type}', [QuestionController::class, 'ajaxViewLoad']);
 
 
   Route::get('/payments', [PaymentController::class, 'index']);

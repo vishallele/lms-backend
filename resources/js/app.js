@@ -26,12 +26,8 @@ jQuery(function ($) {
 
   });
 
-  initTab("question_container");
-  initTab("option_container_wrapper_0");
-  initTab("option_container_wrapper_l_0");
-  initTab("option_container_wrapper_r_0");
 
-  $(".add_option").on("click", function (e) {
+  $(document).on("click", ".add_option", function (e) {
 
     e.preventDefault();
 
@@ -39,7 +35,9 @@ jQuery(function ($) {
     let newOption = $(".option_container_wrapper").first().clone();
     newOption.find('input[type=text]').val('');
     newOption.find('input[type=file]').val('');
+    newOption.find('input[type=checkbox]').attr('checked', false);
     newOption.find('.error_container').remove();
+    newOption.find('.audio_container').remove();
     newOption.appendTo(optionContainer);
 
     $(".option_container_wrapper").each((index, element) => {
@@ -108,7 +106,7 @@ jQuery(function ($) {
 
   });
 
-  $(".add_pair_match").on("click", function (e) {
+  $(document).on("click", ".add_pair_match", function (e) {
 
     e.preventDefault();
 
@@ -361,6 +359,125 @@ jQuery(function ($) {
         }
       }
     });
+
+  });
+
+  //question type
+  $("#question_type").on("change", function (e) {
+
+    e.preventDefault();
+
+    let queType = $(this).val();
+
+    $.ajax({
+      type: "get",
+      url: `/admin/subview/ajax/question/${queType}`,
+      success: function (data) {
+        $("#subview").html(data);
+      },
+      complete: function (data) {
+        switch (queType) {
+          case "select_image":
+          case "select_text":
+            initTab("question_container");
+            initTab("option_container_wrapper_0");
+            break;
+          case "fill_blanks":
+            initTab("question_container_fib");
+            initTab("option_container_wrapper_fib");
+            break;
+          case "pair_matching":
+            initTab("option_container_wrapper_l_0");
+            initTab("option_container_wrapper_r_0");
+            break;
+          case "audio_to_text":
+            initTab("question_container_att");
+            initTab("option_container_wrapper_att");
+            break;
+          case "audio_to_audio":
+            initTab("question_container_ata");
+            break;
+        }
+      }
+    });
+  });
+
+
+  initTab("question_container");
+  //initTab("option_container_wrapper_0");
+
+  initTab("question_container_fib");
+  initTab("option_container_wrapper_fib");
+
+  initTab("option_container_wrapper_l_0");
+  initTab("option_container_wrapper_r_0");
+
+  initTab("question_container_att");
+  initTab("option_container_wrapper_att");
+
+  initTab("question_container_ata");
+
+  $(".option_container_wrapper").each((index, element) => {
+
+    $(element).attr("id", `option_container_wrapper_${index}`);
+
+    $(element)
+      .find(".option_text_en_input")
+      .attr("name", `option_en_text_[${index}]`)
+      .attr("id", `option_en_text_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_en_text_[${index}]`);
+
+    $(element)
+      .find(".option_audio_en_input")
+      .attr("name", `option_en_audio_[${index}]`)
+      .attr("id", `option_en_audio_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_en_audio_[${index}]`);
+
+    $(element)
+      .find(".option_text_hi_input")
+      .attr("name", `option_hi_text_[${index}]`)
+      .attr("id", `option_hi_text_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_hi_text_[${index}]`);
+
+    $(element)
+      .find(".option_audio_hi_input")
+      .attr("name", `option_hi_audio_[${index}]`)
+      .attr("id", `option_hi_audio_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_hi_audio_[${index}]`);
+
+    $(element)
+      .find(".option_text_mr_input")
+      .attr("name", `option_mr_text_[${index}]`)
+      .attr("id", `option_mr_text_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_mr_text_[${index}]`);
+
+    $(element)
+      .find(".option_audio_mr_input")
+      .attr("name", `option_mr_audio_[${index}]`)
+      .attr("id", `option_mr_audio_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_mr_audio_[${index}]`);
+
+    $(element)
+      .find(".option_image_input")
+      .attr("name", `option_image_[${index}]`)
+      .attr("id", `option_image_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_image_[${index}]`);
+
+    $(element)
+      .find(".option_correct_input")
+      .attr("name", `option_correct_[${index}]`)
+      .attr("id", `option_correct_[${index}]`)
+      .siblings('label')
+      .attr("for", `option_correct_[${index}]`);
+
+    initTab(`option_container_wrapper_${index}`);
 
   });
 

@@ -33,6 +33,7 @@
               <input type="checkbox" class="p-check" />
             </th>
             <th class="p-4">Question</th>
+            <th class="p-4">Question Type</th>
             <th class="p-4">
               <span class="sr-only">Action</span>
             </th>
@@ -46,7 +47,14 @@
               <input class="c-check" name="l[]" type="checkbox" value="{{$question->id}}" />
             </td>
             <td class="px-3 py-4">
+              @if( $question->question_type === 'pair_matching')
+              {{'--'}}
+              @else
               <p>{{ $question->question_data['text']['en']['text'] }}</p>
+              @endif
+            </td>
+            <td class="px-3 py-4">
+              {{ $question->question_type }}
             </td>
             <td class="px-2 py-4">
               <div class="flex gap-2 items-center">
