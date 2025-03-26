@@ -25,8 +25,25 @@
               <h1 class="font-semibold">Question Details</h1>
               <div class="mx-1 mt-3 flex flex-col gap-2 input_container">
                 <label for="instruction_text_en" class="text-sm font-semibold">Instruction Text in English</label>
-                <input type="text" name="instruction_text_en" id="instruction_text_en" class=" rounded-md border border-slate-500 p-1 text-black placeholder:text-slate-500" placeholder="Enter question instruction" />
+                <input
+                  type="text"
+                  name="instruction_text_en"
+                  id="instruction_text_en"
+                  class=" rounded-md border border-slate-500 p-1 text-black placeholder:text-slate-500"
+                  placeholder="Enter question instruction"
+                  value="{{old('instruction_text_en', isset($question->id) ? $question->question_data['text']['en']['text'] : '' ) }}" />
               </div>
+
+              @if(isset($question->id) && isset($question->question_data['text']['en']['audio']) )
+              <div class="mx-1 mt-3 mb-5 flex flex-col gap-2 audio_container">
+                <audio controls>
+                  <source src="{{ asset('storage/'.$question->question_data['text']['en']['audio']) }}" type="audio/wav">
+                  <source src="{{ asset('storage/'.$question->question_data['text']['en']['audio']) }}" type="audio/mp3">
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+              @endif
+
               <div class="mx-1 mt-3 mb-5 flex flex-col gap-2 input_container">
                 <label for="question_audio_en" class="text-sm font-semibold">Question Audio File</label>
                 <input type="file" name="question_audio_en" id="question_audio_en" class="rounded-md border border-slate-500 p-1 text-black placeholder:text-black" placeholder="Enter question text" />
@@ -42,8 +59,25 @@
               <h1 class="font-semibold">Question Details</h1>
               <div class="mx-1 mt-3 flex flex-col gap-2 input_container">
                 <label for="instruction_text_hi" class="text-sm font-semibold">Instruction Text Hindi</label>
-                <input type="text" name="instruction_text_hi" id="instruction_text_hi" class="rounded-md border border-slate-500 p-1 text-black placeholder:text-black" placeholder="Enter question instruction" />
+                <input
+                  type="text"
+                  name="instruction_text_hi"
+                  id="instruction_text_hi"
+                  class="rounded-md border border-slate-500 p-1 text-black placeholder:text-black"
+                  placeholder="Enter question instruction"
+                  value="{{old('instruction_text_hi', isset($question->id) ? $question->question_data['text']['hi']['text'] : '' ) }}" />
               </div>
+
+              @if(isset($question->id) && isset($question->question_data['text']['hi']['audio']) )
+              <div class="mx-1 mt-3 mb-5 flex flex-col gap-2 audio_container">
+                <audio controls>
+                  <source src="{{ asset('storage/'.$question->question_data['text']['hi']['audio']) }}" type="audio/wav">
+                  <source src="{{ asset('storage/'.$question->question_data['text']['hi']['audio']) }}" type="audio/mp3">
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+              @endif
+
               <div class="mx-1 mt-3 mb-5 flex flex-col gap-2 input_container">
                 <label for="question_audio_en" class="text-sm font-semibold">Question Audio File</label>
                 <input type="file" name="question_audio_hi" id="question_audio_hi" class="rounded-md border border-slate-500 p-1 text-black placeholder:text-black" placeholder="Enter question text" />
@@ -59,8 +93,25 @@
               <h1 class="font-semibold">Question Details</h1>
               <div class="mx-1 mt-3 flex flex-col gap-2 input_container">
                 <label for="instruction_text_mr" class="text-sm font-semibold">Instruction Text Marathi</label>
-                <input type="text" name="instruction_text_mr" id="instruction_text_mr" class="rounded-md border border-slate-500 p-1 text-black placeholder:text-black" placeholder="Enter instruction text" />
+                <input
+                  type="text"
+                  name="instruction_text_mr"
+                  id="instruction_text_mr"
+                  class="rounded-md border border-slate-500 p-1 text-black placeholder:text-black"
+                  placeholder="Enter instruction text"
+                  value="{{old('instruction_text_mr', isset($question->id) ? $question->question_data['text']['mr']['text'] : '' ) }}" />
               </div>
+
+              @if(isset($question->id) && isset($question->question_data['text']['mr']['audio']) )
+              <div class="mx-1 mt-3 mb-5 flex flex-col gap-2 audio_container">
+                <audio controls>
+                  <source src="{{ asset('storage/'.$question->question_data['text']['mr']['audio']) }}" type="audio/wav">
+                  <source src="{{ asset('storage/'.$question->question_data['text']['mr']['audio']) }}" type="audio/mp3">
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+              @endif
+
               <div class="mx-1 mt-3 mb-5 flex flex-col gap-2 input_container">
                 <label for="question_audio_mr" class="text-sm font-semibold">Question Audio File</label>
                 <input type="file" name="question_audio_mr" id="question_audio_mr" class="rounded-md border border-slate-500 p-1 text-black placeholder:text-black" placeholder="Enter question text" />
@@ -69,6 +120,13 @@
 
 
           </div>
+
+
+          @if(isset($question->id) && isset($question->question_data['image']) )
+          <div class="mx-1 mt-3 mb-5 flex flex-col gap-2 audio_container">
+            <img src="{{ asset('storage/'.$question->question_data['image']) }}" width="100" height="100" />
+          </div>
+          @endif
 
           <!--Question Image-->
           <div class="mx-1 mt-3 flex flex-col gap-2 input_container">
@@ -84,15 +142,21 @@
               id="correct_sentence"
               rows="3"
               class="rounded-md border border-slate-500 p-1 text-black placeholder:text-slate-500"
-              placeholder="Enter correct answer of this sentence"></textarea>
+              placeholder="Enter correct answer of this sentence">{{old('correct_sentence', isset($question->id) ? $question->question_data['correct_anwer'] : '' ) }}</textarea>
           </div>
 
         </div>
 
         <div class="option_container">
-
-          <x-admin.options id="option_container_wrapper_att" type="audio_to_text" />
-
+          @if(isset($question->id) && count($question->question_data['options']) > 0 )
+          @for( $i = 0; $i < count($question->question_data['options']); $i++ )
+            <x-admin.options
+              id="option_container_wrapper_{{$i}}"
+              type="audio_to_text"
+              :option="$question->question_data['options'][$i]"
+              :index="$i" />
+            @endfor
+            @endif
 
         </div>
 

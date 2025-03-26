@@ -169,7 +169,7 @@ class QuestionController extends Controller
         string $question_id
     ) {
         $question = Question::findOrFail($question_id);
-        //dd($question);
+
         $question_types = Config('constant.question_types');
         return view(
             'admin.course.question.create',
@@ -208,20 +208,14 @@ class QuestionController extends Controller
                 $question_data = $this->getPairMatchingData($request);
                 break;
             case "audio_to_text":
-                $question_data = $this->getAudioToTextDdata($request);
+                $question_data = $this->getAudioToTextDdata($request, $question_id);
                 break;
             case "audio_to_audio":
-                $question_data = $this->getAudioToAudioData($request);
+                $question_data = $this->getAudioToAudioData($request, $question_id);
                 break;
         }
 
         try {
-            /*$question = Question::create([
-                "question_data" => $question_data,
-                "lesson_id" => (int)$lesson_id,
-                "question_type" => $question_type
-            ]);*/
-
             $response = Question::where('_id', $question_id)->update([
                 'question_data' => $question_data,
                 'lesson_id' => (int)$lesson_id,
@@ -711,72 +705,186 @@ class QuestionController extends Controller
         return $question;
     }
 
-    private function getAudioToTextDdata($data)
+    private function getAudioToTextDdata($data, $id = null)
     {
 
         $question = $options = [];
 
         $questionAudioEn = $questionAudioHi = $questionAudioMr = $questionImage = null;
 
-        //question audio uploading
-        if ($data->file('question_audio_en')) {
-            $requestFile = $data->file('question_audio_en');
-            $questionAudioEn = $requestFile->store("audio/option/en");
-        }
+        if ($id) {
 
-        if ($data->file('question_audio_hi')) {
-            $requestFile = $data->file('question_audio_hi');
-            $questionAudioHi = $requestFile->store("audio/option/hi");
-        }
+            $oldData = Question::findOrFail($id);
 
-        if ($data->file('question_audio_mr')) {
-            $requestFile = $data->file('question_audio_mr');
-            $questionAudioMr = $requestFile->store("audio/option/mr");
-        }
-
-        if ($data->file('question_image')) {
-            $requestFile = $data->file('question_image');
-            $questionImage = $requestFile->store("image");
-        }
-
-        for ($i = 0; $i < \count($data->get('option_en_text_')); $i++) {
-
-            $enAudioFile = $hiAudioFile = $mrAudioFile =  null;
-
-            if (isset($data->file('option_en_audio_')[$i])) {
-                $requestFile = $data->file('option_en_audio_')[$i];
-                $enAudioFile = $requestFile->store("audio/option/en");
+            //question audio uploading
+            if ($data->file('question_audio_en')) {
+                //delete old file
+                $oldQuestionAudioEn = $oldData->question_data['text']['en']['audio'] ?? null;
+                if ($oldQuestionAudioEn) {
+                    Storage::disk('public')->delete($oldQuestionAudioEn);
+                }
+                $requestFile = $data->file('question_audio_en');
+                $questionAudioEn = $requestFile->store("audio/option/en", "public");
+            } else {
+                $questionAudioEn = $oldData->question_data['text']['en']['audio'] ?? null;
             }
 
-
-            if (isset($data->file('option_hi_audio_')[$i])) {
-                $requestFile = $data->file('option_hi_audio_')[$i];
-                $hiAudioFile = $requestFile->store("audio/option/hi");
+            if ($data->file('question_audio_hi')) {
+                //delete old file
+                $oldQuestionAudioHi = $oldData->question_data['text']['hi']['audio'] ?? null;
+                if ($oldQuestionAudioHi) {
+                    Storage::disk('public')->delete($oldQuestionAudioHi);
+                }
+                $requestFile = $data->file('question_audio_hi');
+                $questionAudioHi = $requestFile->store("audio/option/hi", "public");
+            } else {
+                $questionAudioHi = $oldData->question_data['text']['hi']['audio'] ?? null;
             }
 
-            if (isset($data->file('option_mr_audio_')[$i])) {
-                $requestFile = $data->file('option_mr_audio_')[$i];
-                $mrAudioFile = $requestFile->store("audio/option/mr");
+            if ($data->file('question_audio_mr')) {
+                //delete old file
+                $oldQuestionAudioMr = $oldData->question_data['text']['mr']['audio'] ?? null;
+                if ($oldQuestionAudioMr) {
+                    Storage::disk('public')->delete($oldQuestionAudioMr);
+                }
+                $requestFile = $data->file('question_audio_mr');
+                $questionAudioMr = $requestFile->store("audio/option/mr", "public");
+            } else {
+                $questionAudioMr = $oldData->question_data['text']['mr']['audio'] ?? null;
             }
 
-            $options[$i] = [
-                "text" => [
-                    "en" => [
-                        "text" => $data->get('option_en_text_')[$i],
-                        "audio" => $enAudioFile
+            if ($data->file('question_image')) {
+                //delete old file
+                $oldQuestionImg = $oldData->question_data['image'] ?? null;
+                if ($oldQuestionImg) {
+                    Storage::disk('public')->delete($oldQuestionImg);
+                }
+                $requestFile = $data->file('question_image');
+                $questionImage = $requestFile->store("image", "public");
+            } else {
+                $questionImage = $oldData->question_data['image'] ?? null;
+            }
+
+            for ($i = 0; $i < \count($data->get('option_en_text_')); $i++) {
+
+                $enAudioFile = $hiAudioFile = $mrAudioFile =  null;
+
+                if (isset($data->file('option_en_audio_')[$i])) {
+                    //delete old file
+                    $oldAudioEn = $oldData->question_data['options'][$i]['text']['en']['audio'] ?? null;
+                    if ($oldAudioEn) {
+                        Storage::disk('public')->delete($oldAudioEn);
+                    }
+                    $requestFile = $data->file('option_en_audio_')[$i];
+                    $enAudioFile = $requestFile->store("audio/option/en", "public");
+                } else {
+                    $enAudioFile = $oldData->question_data['options'][$i]['text']['en']['audio'] ?? null;
+                }
+
+
+                if (isset($data->file('option_hi_audio_')[$i])) {
+                    //delete old file
+                    $oldAudioEn = $oldData->question_data['options'][$i]['text']['hi']['audio'] ?? null;
+                    if ($oldAudioEn) {
+                        Storage::disk('public')->delete($oldAudioEn);
+                    }
+
+                    $requestFile = $data->file('option_hi_audio_')[$i];
+                    $hiAudioFile = $requestFile->store("audio/option/hi", "public");
+                } else {
+                    $hiAudioFile = $oldData->question_data['options'][$i]['text']['hi']['audio'] ?? null;
+                }
+
+                if (isset($data->file('option_mr_audio_')[$i])) {
+                    //delete old file
+                    $oldAudioEn = $oldData->question_data['options'][$i]['text']['mr']['audio'] ?? null;
+                    if ($oldAudioEn) {
+                        Storage::disk('public')->delete($oldAudioEn);
+                    }
+
+                    $requestFile = $data->file('option_mr_audio_')[$i];
+                    $mrAudioFile = $requestFile->store("audio/option/mr", "public");
+                } else {
+                    $mrAudioFile = $oldData->question_data['options'][$i]['text']['mr']['audio'] ?? null;
+                }
+
+                $options[$i] = [
+                    "text" => [
+                        "en" => [
+                            "text" => $data->get('option_en_text_')[$i],
+                            "audio" => $enAudioFile
+                        ],
+                        "hi" => [
+                            "text" => $data->get('option_hi_text_')[$i],
+                            "audio" => $hiAudioFile
+                        ],
+                        "mr" => [
+                            "text" => $data->get('option_mr_text_')[$i],
+                            "audio" => $mrAudioFile
+                        ]
                     ],
-                    "hi" => [
-                        "text" => $data->get('option_hi_text_')[$i],
-                        "audio" => $hiAudioFile
-                    ],
-                    "mr" => [
-                        "text" => $data->get('option_mr_text_')[$i],
-                        "audio" => $mrAudioFile
-                    ]
-                ],
-            ];
-        }
+                ];
+            }
+        } else {
+            //question audio uploading
+            if ($data->file('question_audio_en')) {
+                $requestFile = $data->file('question_audio_en');
+                $questionAudioEn = $requestFile->store("audio/option/en");
+            }
 
+            if ($data->file('question_audio_hi')) {
+                $requestFile = $data->file('question_audio_hi');
+                $questionAudioHi = $requestFile->store("audio/option/hi");
+            }
+
+            if ($data->file('question_audio_mr')) {
+                $requestFile = $data->file('question_audio_mr');
+                $questionAudioMr = $requestFile->store("audio/option/mr");
+            }
+
+            if ($data->file('question_image')) {
+                $requestFile = $data->file('question_image');
+                $questionImage = $requestFile->store("image");
+            }
+
+            for ($i = 0; $i < \count($data->get('option_en_text_')); $i++) {
+
+                $enAudioFile = $hiAudioFile = $mrAudioFile =  null;
+
+                if (isset($data->file('option_en_audio_')[$i])) {
+                    $requestFile = $data->file('option_en_audio_')[$i];
+                    $enAudioFile = $requestFile->store("audio/option/en");
+                }
+
+
+                if (isset($data->file('option_hi_audio_')[$i])) {
+                    $requestFile = $data->file('option_hi_audio_')[$i];
+                    $hiAudioFile = $requestFile->store("audio/option/hi");
+                }
+
+                if (isset($data->file('option_mr_audio_')[$i])) {
+                    $requestFile = $data->file('option_mr_audio_')[$i];
+                    $mrAudioFile = $requestFile->store("audio/option/mr");
+                }
+
+                $options[$i] = [
+                    "text" => [
+                        "en" => [
+                            "text" => $data->get('option_en_text_')[$i],
+                            "audio" => $enAudioFile
+                        ],
+                        "hi" => [
+                            "text" => $data->get('option_hi_text_')[$i],
+                            "audio" => $hiAudioFile
+                        ],
+                        "mr" => [
+                            "text" => $data->get('option_mr_text_')[$i],
+                            "audio" => $mrAudioFile
+                        ]
+                    ],
+                ];
+            }
+        }
 
         $question = [
 
@@ -802,32 +910,86 @@ class QuestionController extends Controller
         return $question;
     }
 
-    private function getAudioToAudioData($data)
+    private function getAudioToAudioData($data, $id = null)
     {
 
         $question = [];
 
         $questionAudioEn = $questionAudioHi = $questionAudioMr = $questionImage = null;
 
-        //question audio uploading
-        if ($data->file('question_audio_en')) {
-            $requestFile = $data->file('question_audio_en');
-            $questionAudioEn = $requestFile->store("audio/option/en");
-        }
+        if ($id) {
 
-        if ($data->file('question_audio_hi')) {
-            $requestFile = $data->file('question_audio_hi');
-            $questionAudioHi = $requestFile->store("audio/option/hi");
-        }
+            $oldData = Question::findOrFail($id);
 
-        if ($data->file('question_audio_mr')) {
-            $requestFile = $data->file('question_audio_mr');
-            $questionAudioMr = $requestFile->store("audio/option/mr");
-        }
+            //question audio uploading
+            if ($data->file('question_audio_en')) {
+                //delete old file
+                $oldQuestionAudioEn = $oldData->question_data['text']['en']['audio'] ?? null;
+                if ($oldQuestionAudioEn) {
+                    Storage::disk('public')->delete($oldQuestionAudioEn);
+                }
+                $requestFile = $data->file('question_audio_en');
+                $questionAudioEn = $requestFile->store("audio/option/en", "public");
+            } else {
+                $questionAudioEn = $oldData->question_data['text']['en']['audio'] ?? null;
+            }
 
-        if ($data->file('question_image')) {
-            $requestFile = $data->file('question_image');
-            $questionImage = $requestFile->store("image");
+            if ($data->file('question_audio_hi')) {
+                //delete old file
+                $oldQuestionAudioHi = $oldData->question_data['text']['hi']['audio'] ?? null;
+                if ($oldQuestionAudioHi) {
+                    Storage::disk('public')->delete($oldQuestionAudioHi);
+                }
+                $requestFile = $data->file('question_audio_hi');
+                $questionAudioHi = $requestFile->store("audio/option/hi", "public");
+            } else {
+                $questionAudioHi = $oldData->question_data['text']['hi']['audio'] ?? null;
+            }
+
+            if ($data->file('question_audio_mr')) {
+                //delete old file
+                $oldQuestionAudioMr = $oldData->question_data['text']['mr']['audio'] ?? null;
+                if ($oldQuestionAudioMr) {
+                    Storage::disk('public')->delete($oldQuestionAudioMr);
+                }
+                $requestFile = $data->file('question_audio_mr');
+                $questionAudioMr = $requestFile->store("audio/option/mr", "public");
+            } else {
+                $questionAudioMr =  $oldData->question_data['text']['mr']['audio'] ?? null;
+            }
+
+            if ($data->file('question_image')) {
+                //delete old file
+                $oldQuestionAudioImg = $oldData->question_data['image'] ?? null;
+                if ($oldQuestionAudioImg) {
+                    Storage::disk('public')->delete($oldQuestionAudioImg);
+                }
+                $requestFile = $data->file('question_image');
+                $questionImage = $requestFile->store("image", "public");
+            } else {
+                $questionImage = $oldData->question_data['image'] ?? null;
+            }
+        } else {
+            //question audio uploading
+            if ($data->file('question_audio_en')) {
+                $requestFile = $data->file('question_audio_en');
+                $questionAudioEn = $requestFile->store("audio/option/en", "public");
+            }
+
+            if ($data->file('question_audio_hi')) {
+                $requestFile = $data->file('question_audio_hi');
+                $questionAudioHi = $requestFile->store("audio/option/hi", "public");
+            }
+
+            if ($data->file('question_audio_mr')) {
+                $requestFile = $data->file('question_audio_mr');
+                $questionAudioMr = $requestFile->store("audio/option/mr", "public");
+            }
+
+            if ($data->file('question_image')) {
+                $requestFile = $data->file('question_image');
+                $questionImage = $requestFile->store("image", "public");
+            }
         }
 
         $question = [
